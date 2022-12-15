@@ -1,4 +1,4 @@
-export type Generator<T> = { next: () => T }
+export type SequenceGenerator<T> = { next: () => T }
 
 export type Position = {
     row: number,
@@ -15,7 +15,7 @@ export type Board<T> = {
     width: number;
     height: number;
     pieces: T[];
-    generator: Generator<T>;
+    generator: SequenceGenerator<T>;
 };
 
 export type Effect<T> = {
@@ -29,7 +29,7 @@ export type MoveResult<T> = {
     effects: Effect<T>[]
 }
 
-export function create<T>(generator: Generator<T>, width: number, height: number): Board<T> {
+export function create<T>(generator: SequenceGenerator<T>, width: number, height: number): Board<T> {
     let board: Board<T> = {
         score: 0,
         width: width,

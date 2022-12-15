@@ -10,6 +10,7 @@ import {
 } from './authSlice';
 import styles from './Auth.module.css';
 import { createStore } from "redux";
+import { Game } from "../game/Game";
 
 export function Auth() {
     const token = useSelector(selectToken);
@@ -24,7 +25,6 @@ export function Auth() {
         username: username,
         password: password
     }
-
     if (mode == "login") {
         title = "Login1";
         button = <button onClick={() => dispatch(loginAsync(cred))}>Login</button>;
@@ -41,6 +41,7 @@ export function Auth() {
         body = <div>
             <button onClick={() => dispatch(logoutAsync(token))}>Logout</button>
             <h1>ok</h1><p>{token}</p>
+            <Game token={token}></Game>
         </div>;
     }
     else 

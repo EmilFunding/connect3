@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import { Board } from './board';
 import * as ConnectGame from './board'
+import path from 'path';
 let baseUrl = 'http://localhost:9090/';
 
 class CyclicGenerator implements ConnectGame.SequenceGenerator<string> {
@@ -23,13 +24,15 @@ class CyclicGenerator implements ConnectGame.SequenceGenerator<string> {
 export interface GameState {
     generator? : CyclicGenerator,
     board? : Board<string>,
-    inGame : boolean
+    inGame : boolean,
+    gameId : number
 }
   
 const initialState: GameState = {
     generator: undefined,
     board: undefined,
-    inGame: false
+    inGame: false,
+    gameId: 0
 };
 
 export const createGameAsync = createAsyncThunk(
@@ -44,7 +47,22 @@ export const createGameAsync = createAsyncThunk(
           })
       return await response.json();
     }
-  );
+);
+
+export const patchGameAsync = createAsyncThunk(
+  'game/createGame',
+  async (patch : {token: string, user: string, id: string, score : number, completed : boolean}) => {
+      let response = await fetch(baseUrl + "games/" + patch.id + "?token=" + patch.token, {
+          method: 'PATCH',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            body: JSON.stringify({ userId: 1, id: patch.id, score: patch.score, completed: patch.completed })
+          },
+        })
+    return await response.json();
+  }
+);
 
 export const gameSlice = createSlice({
     name: 'game',
@@ -70,11 +88,16 @@ export const gameSlice = createSlice({
             state.inGame = false;
           })
           .addCase(createGameAsync.fulfilled, (state, action) => {
+            state.gameId = action.payload.id;
             state.inGame = true;
             state.generator = new CyclicGenerator('ABC');
             state.board = ConnectGame.create(state.generator, 9, 9);
           })
       },
   });
+
+  export const selectBoard = (state : RootState) => state.game.board;
+  export const selectInGame = (state : RootState) => state.game.inGame;
+  export const selectGameId = (state : RootState) => state.game.gameId;
 
   export default gameSlice.reducer;

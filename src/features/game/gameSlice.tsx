@@ -1,23 +1,22 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { Board } from './board';
+import { Board, Tile } from './board';
 import * as ConnectGame from './board'
 import path from 'path';
 let baseUrl = 'http://localhost:9090/';
 
-class CyclicGenerator implements ConnectGame.SequenceGenerator<string> {
-    private sequence: string
+export class CyclicGenerator implements ConnectGame.SequenceGenerator<string> {
+    private sequence: string[]
     private index: number
 
-    constructor(sequence: string) {
+    constructor(sequence: string[]) {
         this.sequence = sequence
         this.index = 0
     }
 
     next(): string {
-        const n = this.sequence.charAt(this.index)
-        this.index = (this.index + 1) % this.sequence.length
-        return n
+        const n = Math.floor(Math.random() * this.sequence.length);
+        return this.sequence[n];
     }
 }
 
@@ -92,14 +91,15 @@ export const gameSlice = createSlice({
           .addCase(createGameAsync.fulfilled, (state, action) => {
             state.gameId = action.payload.id;
             state.inGame = true;
-            state.generator = new CyclicGenerator('ABC');
+            state.generator = new CyclicGenerator(['bee','frog','lion','pig', 'turtle']);
             state.board = ConnectGame.create(state.generator, 9, 9);
           })
       },
   });
 
-  export const selectBoard = (state : RootState) => state.game.board;
+  export const  selectBoard = (state : RootState) => state.game.board;
   export const selectInGame = (state : RootState) => state.game.inGame;
   export const selectGameId = (state : RootState) => state.game.gameId;
+  export const selectGenerator = (state : RootState) => state.game.generator;
 
   export default gameSlice.reducer;

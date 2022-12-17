@@ -1,0 +1,38 @@
+.gamecontainer{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5rem;;
+}
+.gamecontainer table.game{
+    width: fit-content;
+}
+.gamecontainer table.game tr{
+    display: flex;
+}
+
+.gamecontainer table.game td
+{
+    height: 3rem;
+    width: 3rem;
+    margin: .1rem .2rem;
+    border-radius: .4rem;
+    background: #fff7e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: ease-in-out .2s box-shadow;
+    box-shadow: none;
+}
+
+.gamecontainer table.game td > img{
+    height: 80%;
+    width: 80%;
+}
+
+.gamecontainer table.game td:hover{
+    transform: scale(1.05);
+    box-shadow: rgba(70, 70, 7, 0.1) 0px 1px 2px 0px;
+}

@@ -1,10 +1,15 @@
+import { errorMonitor } from "events";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
-import { createGameAsync, selectBoard, selectGameId, selectInGame } from "./gameSlice";
+import { createGameAsync, patchGameAsync, selectBoard, selectGameId, selectInGame } from "./gameSlice";
 
 interface GameProps{
     token : string,
+}
+
+function CoordsToIndex(col: number, row: number, width: number): number {
+    return col + (row * width);
 }
 
 export function Game({token} : GameProps){
@@ -14,6 +19,8 @@ export function Game({token} : GameProps){
     const gameId = useSelector(selectGameId);
     const dispatch = useAppDispatch();
     
+    let patch = {token: token, user: 1, id: 1, score : 17, completed : false};
+
     let body;
     if (!inGame)
     {
@@ -27,9 +34,10 @@ export function Game({token} : GameProps){
     {
         body = (
         <div>
+            <button onClick={() => dispatch(patchGameAsync(patch))}>Patch</button>
             <h2>What an amazing game</h2>
-            <h2>{board?.score}</h2>
-            <h2>{gameId}</h2>
+            <p>Score: {board?.score}</p>
+            <p>GmaeId: {gameId}</p>
         </div>);
     }
 

@@ -51,15 +51,17 @@ export const createGameAsync = createAsyncThunk(
 
 export const patchGameAsync = createAsyncThunk(
   'game/createGame',
-  async (patch : {token: string, user: string, id: string, score : number, completed : boolean}) => {
+  async (patch : {token: string, user: number, id: number, score : number, completed : boolean}) => {
+    console.log(patch.token);
       let response = await fetch(baseUrl + "games/" + patch.id + "?token=" + patch.token, {
           method: 'PATCH',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            body: JSON.stringify({ userId: 1, id: patch.id, score: patch.score, completed: patch.completed })
           },
+          body: JSON.stringify({ user: 1, id: patch.id, score: patch.score, completed: patch.completed })
         })
+        console.log(response);
     return await response.json();
   }
 );

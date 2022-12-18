@@ -3,26 +3,27 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { Board, Tile, Position, move } from "./board";
-import { createGameAsync, patchGameAsync, selectBoard, selectGameId, selectInGame } from "./gameSlice";
+import { createGameAsync, patchGameAsync, selectBoard, selectGameId, selectInGame, makeMove, selectMoveCount, makeStable, selectGameOver, setGameOver } from "./gameSlice";
 import './Game.css';
 
 interface GameProps{
     token : string,
+    user : number
 }
 
 function CoordsToIndex(col: number, row: number, width: number): number {
     return col + (row * width);
 }
 
-export function Game({token} : GameProps){
+export function Game({token, user} : GameProps){
 
     const inGame = useSelector(selectInGame);
     const board = useSelector(selectBoard);
     const gameId = useSelector(selectGameId);
+    const gameOver = useSelector(selectGameOver);
+    const moveCount = useSelector(selectMoveCount);
     const dispatch = useAppDispatch();
     
-    let patch = {token: token, user: 1, id: 1, score : 17, completed : false};
-
     function ShowBoard(board : Board<string>){
         let rows = Array.from(Array(10).keys());
         return (<div className="gamecontainer">
@@ -53,9 +54,27 @@ export function Game({token} : GameProps){
         if(_positions.length == 2){
             let second = _positions.pop();
             let first = _positions.pop();
-            console.log("move")
-            dispatch(() => move(board, first!, second!))
+                
+            if (!gameOver)
+            {
+                dispatch(makeMove({first: first!,second: second!}));
+            }
+
+            if (moveCount == 9)
+            {
+                dispatch(setGameOver());
+            }
+                
+            let complete = moveCount >= 10;
+            let patch = {token: token, user: user, id: gameId, score : board.score, completed : complete};
+            dispatch(patchGameAsync(patch));
         }
+    }
+
+    let newGameButton = undefined;
+    if (moveCount >= 10)
+    {
+        newGameButton = (<button onClick={() => dispatch(createGameAsync(token))}>Create new game</button>);
     }
 
     let body;
@@ -63,19 +82,24 @@ export function Game({token} : GameProps){
     {
         body = (
         <div>
-            <h2>What an amazing game</h2>
+            <h2>Connect 3</h2>
             <button onClick={() => dispatch(createGameAsync(token))}>Create new game</button>
         </div>);
     }
     else
     {
+        if(moveCount == 0)
+        {
+            dispatch(makeStable());
+        }
+    
         body = (
         <div>
-            <button onClick={() => dispatch(patchGameAsync(patch))}>Patch</button>
-            <h2>What an amazing game</h2>
-            <p>Score: {board?.score}</p>
-            <p>GmaeId: {gameId}</p>
+            <h2>Connect 3</h2>
+            <p>Score: {board?.score} - GameId: {gameId} - Moves left: {(10 - moveCount)}</p>
             {ShowBoard(board!)}
+            {newGameButton}
+            
         </div>);
     }
     

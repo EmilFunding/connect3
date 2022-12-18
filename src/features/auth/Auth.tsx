@@ -6,7 +6,8 @@ import {
     loginAsync,
     selectValidToken,
     selectToken,
-    logoutAsync
+    logoutAsync,
+    selectUser
 } from './authSlice';
 import styles from './Auth.module.css';
 import { createStore } from "redux";
@@ -15,6 +16,7 @@ import { ScoreBoard } from "../scoreboard/ScoreBoard";
 
 export function Auth() {
     const token = useSelector(selectToken);
+    const user = useSelector(selectUser);
     const validToken = useSelector(selectValidToken);
     const dispatch = useAppDispatch();
     let [mode, setMode] = useState("login");
@@ -40,11 +42,11 @@ export function Auth() {
     let body;
     if (validToken) {
         body = <div>
-            <ScoreBoard token={token}></ScoreBoard>
+            <ScoreBoard token={token} user={user}></ScoreBoard>
             <hr/>
             <button onClick={() => dispatch(logoutAsync(token))}>Logout</button>
             <h1>ok</h1><p>{token}</p>
-            <Game token={token}></Game>
+            <Game token={token} user={user}></Game>
         </div>;
     }
     else 

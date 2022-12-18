@@ -7,7 +7,8 @@ export interface AuthState {
     username: string,
     status: string,
     token: string,
-    validToken: boolean
+    validToken: boolean,
+    userId : number,
 }
   
 const initialState: AuthState = {
@@ -15,6 +16,7 @@ const initialState: AuthState = {
     status: "",
     token: "",
     validToken: false,
+    userId: -1,
   };
 
   export const loginAsync = createAsyncThunk(
@@ -75,6 +77,7 @@ const initialState: AuthState = {
                 console.log(action.payload);
                 state.validToken = true;
                 state.token = action.payload.token;
+                state.userId = action.payload.userId;
               }
           })
           .addCase(logoutAsync.fulfilled, (state) => {
@@ -88,5 +91,6 @@ const initialState: AuthState = {
 
   export const selectValidToken = (state : RootState) => state.auth.validToken;
   export const selectToken = (state : RootState) => state.auth.token;
+  export const selectUser = (state : RootState) => state.auth.userId;
 
   export default authSlice.reducer;

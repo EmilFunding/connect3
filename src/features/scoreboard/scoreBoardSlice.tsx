@@ -6,7 +6,7 @@ let baseUrl = 'http://localhost:9090/';
 export interface ScoreBoardState {
     user : number,
     userHighscores? : number[],
-    GlobalHighscores? : Number[],
+    GlobalHighscores? : number[],
 }
   
 const initialState:  ScoreBoardState = {
@@ -50,10 +50,15 @@ export const scoreBoardSlice = createSlice({
             let sortedGames = games.sort((a,b) => {return a.score - b.score});
             
             state.GlobalHighscores = sortedGames.map(x => x.score);
+            state.GlobalHighscores.reverse();
+            console.log(state.user);
             state.userHighscores = sortedGames.filter(x => x.user == state.user).map(x => x.score);
+            state.userHighscores.reverse();
           })
       },
   });
+
+  export const { setUser } = scoreBoardSlice.actions;
 
   export const selectUserHighscore = (state : RootState) => state.scoreboard.userHighscores;
   export const selectGlobalHighscore = (state : RootState) => state.scoreboard.GlobalHighscores;

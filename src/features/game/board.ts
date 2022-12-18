@@ -148,9 +148,9 @@ export function move<T>(board: Board<T>, first: Position, second: Position): Mov
     return moveResult;
 }
 
-function evolveBoard<T>(moveResult : MoveResult<T>): MoveResult<T> {
+export function evolveBoard<T>(moveResult : MoveResult<T>): MoveResult<T> {
     let events: Effect<T>[] = [];
-
+    
     // Foreach row
     for (let Y = 0; Y < moveResult.board.height; Y++) {
         var last = moveResult.board.pieces[CoordsToIndex(0, Y, moveResult.board.width)];

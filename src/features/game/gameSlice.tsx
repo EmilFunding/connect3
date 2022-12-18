@@ -24,14 +24,18 @@ export interface GameState {
     generator? : CyclicGenerator,
     board? : Board<string>,
     inGame : boolean,
-    gameId : number
+    gameId : number,
+    moveCount : number,
+    gameOver : boolean,
 }
   
 const initialState: GameState = {
     generator: undefined,
     board: undefined,
     inGame: false,
-    gameId: 0
+    gameId: 0,
+    moveCount : 0,
+    gameOver : false
 };
 
 export const createGameAsync = createAsyncThunk(
@@ -51,15 +55,16 @@ export const createGameAsync = createAsyncThunk(
 export const patchGameAsync = createAsyncThunk(
   'game/pathGame',
   async (patch : {token: string, user: number, id: number, score : number, completed : boolean}) => {
-    console.log(patch.token);
+    console.log(patch);
       let response = await fetch(baseUrl + "games/" + patch.id + "?token=" + patch.token, {
           method: 'PATCH',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user: 1, id: patch.id, score: patch.score, completed: patch.completed })
+          body: JSON.stringify({ user: patch.user, id: patch.id, score: patch.score, completed: patch.completed })
         })
+        console.log(response);
     return await response.json();
   }
 );
@@ -83,18 +88,25 @@ export const gameSlice = createSlice({
     name: 'game',
     initialState,
     reducers: {
-      createUser: (state, action: PayloadAction<{username : string, password : string}>) => {
-        console.log("create: user: " + action.payload.username + ", pass: " + action.payload.password);
-
-        fetch(baseUrl + "users", {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({username: action.payload.username, password: action.payload.password})
-        }).then(response => console.log(JSON.stringify(response)));
-
+      reset: (state) => {
+        state.inGame = false;
+        state.gameOver = false;
+      },
+      setGameOver: (state) => {
+        state.gameOver = true;
+      },
+      makeMove: (state, action: PayloadAction<{first : ConnectGame.Position, second : ConnectGame.Position}>) => {
+        state.board = ConnectGame.move(state.board!, action.payload.first, action.payload.second).board;
+        state.moveCount++;
+      },
+      makeStable: (state) => {
+        let moveResult: ConnectGame.MoveResult<string> = {
+          board: state.board!,
+          effects: []
+        };
+        // Create stable board state
+        state.board = ConnectGame.evolveBoard(moveResult).board;
+        state.board.score = 0;
       }
     },
     extraReducers: (builder) => {
@@ -105,15 +117,20 @@ export const gameSlice = createSlice({
           .addCase(createGameAsync.fulfilled, (state, action) => {
             state.gameId = action.payload.id;
             state.inGame = true;
+            state.gameOver = false;
             state.generator = new CyclicGenerator(['bee','frog','lion','pig', 'turtle']);
             state.board = ConnectGame.create(state.generator, 9, 9);
           })
       },
   });
 
-  export const  selectBoard = (state : RootState) => state.game.board;
+  export const { makeMove, makeStable, setGameOver } = gameSlice.actions;
+
+  export const selectBoard = (state : RootState) => state.game.board;
   export const selectInGame = (state : RootState) => state.game.inGame;
   export const selectGameId = (state : RootState) => state.game.gameId;
   export const selectGenerator = (state : RootState) => state.game.generator;
+  export const selectMoveCount = (state : RootState) => state.game.moveCount;
+  export const selectGameOver = (state : RootState) => state.game.gameOver;
 
   export default gameSlice.reducer;

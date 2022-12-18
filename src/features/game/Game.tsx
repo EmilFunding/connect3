@@ -37,7 +37,7 @@ export function Game({token} : GameProps){
             <button onClick={() => dispatch(patchGameAsync(patch))}>Patch</button>
             <h2>What an amazing game</h2>
             <p>Score: {board?.score}</p>
-            <p>GmaeId: {gameId}</p>
+            <p>GameId: {gameId}</p>
         </div>);
     }
 

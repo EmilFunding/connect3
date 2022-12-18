@@ -11,6 +11,7 @@ import {
 import styles from './Auth.module.css';
 import { createStore } from "redux";
 import { Game } from "../game/Game";
+import { ScoreBoard } from "../scoreboard/ScoreBoard";
 
 export function Auth() {
     const token = useSelector(selectToken);
@@ -39,6 +40,8 @@ export function Auth() {
     let body;
     if (validToken) {
         body = <div>
+            <ScoreBoard token={token}></ScoreBoard>
+            <hr/>
             <button onClick={() => dispatch(logoutAsync(token))}>Logout</button>
             <h1>ok</h1><p>{token}</p>
             <Game token={token}></Game>

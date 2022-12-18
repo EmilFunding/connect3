@@ -5,6 +5,11 @@ export type Position = {
     col: number
 }
 
+export type Tile = {
+    type: string,
+    selected: boolean
+}
+
 export type Match<T> = {
     matched: T,
     positions: Position[]
@@ -73,7 +78,7 @@ export function canMove<T>(board: Board<T>, first: Position, second: Position): 
         var last = board.pieces[CoordsToIndex(0, Y, board.width)];
         var count = 0;
         for (let X = 1; X < board.width; X++) {
-            const element = board.pieces[CoordsToIndex(X, Y, board.width)];
+            let element = board.pieces[CoordsToIndex(X, Y, board.width)];
             if (element === last) {
                 count++;
                 if (count >= 2) {
@@ -92,7 +97,7 @@ export function canMove<T>(board: Board<T>, first: Position, second: Position): 
         var last = board.pieces[CoordsToIndex(X, 0, board.width)];
         var count = 0;
         for (let Y = 1; Y < board.height; Y++) {
-            const element = board.pieces[CoordsToIndex(X, Y, board.width)];
+            let element = board.pieces[CoordsToIndex(X, Y, board.width)];
             if (element === last) {
                 count++;
                 if (count >= 2) {
@@ -110,8 +115,10 @@ export function canMove<T>(board: Board<T>, first: Position, second: Position): 
     return false;
 }
 
-export function move<T>(generator: Generator<T>, board: Board<T>, first: Position, second: Position): MoveResult<T> {
+export function move<T>(board: Board<T>, first: Position, second: Position): MoveResult<T> {
     
+    console.log("pos1 - col: " + first.col + " row: " + first.row + " index:" + PositionToIndex(first, board.width))
+    console.log("pos2 - col: " + second.col + " row: " + second.row + " index:" + PositionToIndex(second, board.width))
     let moveResult: MoveResult<T> = {
         board: board,
         effects: []
@@ -155,8 +162,8 @@ function evolveBoard<T>(moveResult : MoveResult<T>): MoveResult<T> {
         };
 
         for (let X = 1; X < moveResult.board.width; X++) {
-            const index = CoordsToIndex(X, Y, moveResult.board.width);
-            const element = moveResult.board.pieces[index];
+            let index = CoordsToIndex(X, Y, moveResult.board.width);
+            let element = moveResult.board.pieces[index];
             if (element === last) {
                 count++;
             } else {
@@ -204,8 +211,8 @@ function evolveBoard<T>(moveResult : MoveResult<T>): MoveResult<T> {
         };
 
         for (let Y = 1; Y < moveResult.board.height; Y++) {
-            const index = CoordsToIndex(X, Y, moveResult.board.width);
-            const element = moveResult.board.pieces[index];
+            let index = CoordsToIndex(X, Y, moveResult.board.width);
+            let element = moveResult.board.pieces[index];
             if (element === last) {
                 count++;
             } else {
@@ -262,7 +269,7 @@ function evolveBoard<T>(moveResult : MoveResult<T>): MoveResult<T> {
     while (moveResult.board.pieces.includes(undefined!)) {
         gravity(moveResult.board);
         for (let index = 0; index < moveResult.board.width; index++) {
-            const element = moveResult.board.pieces[index];
+            let element = moveResult.board.pieces[index];
             if (element == undefined) {
                 moveResult.board.pieces[index] = moveResult.board.generator.next();
             }
@@ -298,9 +305,12 @@ function swap<T>(board: Board<T>, first: Position, second: Position) {
     var p2 = board.pieces[PositionToIndex(second, board.width)];
     board.pieces[PositionToIndex(first, board.width)] = p2;
     board.pieces[PositionToIndex(second, board.width)] = p1;
+
+    //[board.pieces[PositionToIndex(second, board.width)], board.pieces[PositionToIndex(first, board.width)]] = [board.pieces[PositionToIndex(first, board.width)], board.pieces[PositionToIndex(second, board.width)]];
 }
 
 function IndexToPosition(i: number, width: number): Position {
+    console.log("i:" + i + " width:" + width)
     let pos: Position = {
         col: i % width,
         row: Math.floor(i / width)

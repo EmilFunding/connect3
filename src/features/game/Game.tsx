@@ -2,7 +2,9 @@ import { errorMonitor } from "events";
 import React, { useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
+import { Board, Tile, Position, move } from "./board";
 import { createGameAsync, patchGameAsync, selectBoard, selectGameId, selectInGame } from "./gameSlice";
+import './Game.css';
 
 interface GameProps{
     token : string,
@@ -21,6 +23,41 @@ export function Game({token} : GameProps){
     
     let patch = {token: token, user: 1, id: 1, score : 17, completed : false};
 
+    function ShowBoard(board : Board<string>){
+        let rows = Array.from(Array(10).keys());
+        return (<div className="gamecontainer">
+            <table className="game">
+                {rows.map(item => (Row(board, item)))}
+            </table>
+        </div>);
+    }
+
+    function Row(board : Board<string>, y : number){
+        let p = board.pieces.slice(y * board.width, (y * board.width) + board.width)
+
+        return (<tr className="row">
+            {p.map((item, index) => <td onClick={() => Select(board, index, y)}><img src={"/tiles/" + item + ".png"} /></td>)}
+        </tr>)
+    }
+    let _positions : Position[];
+
+    function Select(board : Board<string>, x : number, y : number){
+        let pos: Position = {
+            col: x,
+            row: y
+        };
+        if(_positions == undefined){
+            _positions = []
+        }
+        _positions.push(pos);
+        if(_positions.length == 2){
+            let second = _positions.pop();
+            let first = _positions.pop();
+            console.log("move")
+            dispatch(() => move(board, first!, second!))
+        }
+    }
+
     let body;
     if (!inGame)
     {
@@ -37,9 +74,10 @@ export function Game({token} : GameProps){
             <button onClick={() => dispatch(patchGameAsync(patch))}>Patch</button>
             <h2>What an amazing game</h2>
             <p>Score: {board?.score}</p>
-            <p>GameId: {gameId}</p>
+            <p>GmaeId: {gameId}</p>
+            {ShowBoard(board!)}
         </div>);
     }
-
+    
     return body;
 }

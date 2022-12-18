@@ -13,6 +13,7 @@ import styles from './Auth.module.css';
 import { createStore } from "redux";
 import { Game } from "../game/Game";
 import { ScoreBoard } from "../scoreboard/ScoreBoard";
+import './Auth.css';
 
 export function Auth() {
     const token = useSelector(selectToken);
@@ -29,7 +30,7 @@ export function Auth() {
         password: password
     }
     if (mode == "login") {
-        title = "Login1";
+        title = "Login";
         button = <button onClick={() => dispatch(loginAsync(cred))}>Login</button>;
         action = <div className={styles.loginAction} onClick={() => setMode("create")}>Create user</div>;
     }
@@ -41,12 +42,18 @@ export function Auth() {
 
     let body;
     if (validToken) {
-        body = <div>
-            <ScoreBoard token={token} user={user}></ScoreBoard>
-            <hr/>
-            <button onClick={() => dispatch(logoutAsync(token))}>Logout</button>
-            <h1>ok</h1><p>{token}</p>
-            <Game token={token} user={user}></Game>
+        body = 
+        <div className={styles.gameContainer}>
+            <div className={styles.gameHeader}>
+                <div className={styles.token}>
+                    {token}
+                </div>
+                <button onClick={() => dispatch(logoutAsync(token))}>Logout</button>
+            </div>
+            <div className={styles.gameContent}>
+                <Game token={token} user={user}></Game>
+                <ScoreBoard token={token} user={user}></ScoreBoard>
+            </div>
         </div>;
     }
     else 

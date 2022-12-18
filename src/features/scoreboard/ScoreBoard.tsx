@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { getAllGamesAsync, selectGlobalHighscore, selectUserHighscore, setUser } from "./scoreBoardSlice";
+import './ScoreBoard.css';
+
 
 interface ScoreBoardProps{
     token : string,
@@ -19,11 +21,14 @@ export function ScoreBoard({token, user} : ScoreBoardProps){
         dispatch(setUser({ userId: user }));
     })
 
-    function ShowHighScores(scores : number[] ,i : number){
+    function ShowHighScores(scores : number[] ,i : number, type : string){
         let rows = Array.from(Array(i).keys());
         return (
-        <div>
-            <ol >
+        <div className={type}>
+            <label>
+                {type} top {i}
+            </label>
+            <ol>
                 {rows.map(item => (<li>{scores![item]}</li>))}
             </ol>
         </div>);
@@ -34,12 +39,12 @@ export function ScoreBoard({token, user} : ScoreBoardProps){
     {
         scores = (
         <div>
-            {ShowHighScores(globalHighScore! , 10)}
-            {ShowHighScores(userHighScore! , 3)}
+            {ShowHighScores(globalHighScore! , 10, "global")}
+            {ShowHighScores(userHighScore! , 3, "personal")}
         </div>)
     }
 
-    let body = (<div>
+    let body = (<div className="scores">
         <p>High scores</p>
         {scores}
     </div>);

@@ -24,12 +24,20 @@ export function Game({token, user} : GameProps){
     const moveCount = useSelector(selectMoveCount);
     const dispatch = useAppDispatch();
     
+
+    let newGameButton = (<div></div>);
+    if (moveCount >= 10)
+    {
+        newGameButton = (<div className="gameover"><button onClick={() => dispatch(createGameAsync(token))}>Try again</button></div>);
+    }
+
     function ShowBoard(board : Board<string>){
         let rows = Array.from(Array(10).keys());
         return (<div className="gamecontainer">
             <table className="game">
                 {rows.map(item => (Row(board, item)))}
             </table>
+            {newGameButton}
         </div>);
     }
 
@@ -70,19 +78,14 @@ export function Game({token, user} : GameProps){
             dispatch(patchGameAsync(patch));
         }
     }
-
-    let newGameButton = undefined;
-    if (moveCount >= 10)
-    {
-        newGameButton = (<button onClick={() => dispatch(createGameAsync(token))}>Create new game</button>);
-    }
-
     let body;
     if (!inGame)
     {
         body = (
-        <div>
-            <h2>Connect 3</h2>
+        <div className="startgame">
+            <h2>
+                Start now
+            </h2>
             <button onClick={() => dispatch(createGameAsync(token))}>Create new game</button>
         </div>);
     }
@@ -94,12 +97,29 @@ export function Game({token, user} : GameProps){
         }
     
         body = (
-        <div>
-            <h2>Connect 3</h2>
-            <p>Score: {board?.score} - GameId: {gameId} - Moves left: {(10 - moveCount)}</p>
+        <div className="ingame">
+            <div className="stats">
+                <div className="score">
+                    <label>
+                        Score
+                    </label>
+                    <span>
+                        {board?.score}
+                    </span>
+                </div>
+                <div className="score">
+                    <label>
+                    Moves left
+                    </label>
+                    <span>
+                        {(10 - moveCount)}
+                    </span>
+                </div>
+            </div>
             {ShowBoard(board!)}
-            {newGameButton}
-            
+            <div className="gameid">
+                Game Id: {gameId}
+            </div>
         </div>);
     }
     

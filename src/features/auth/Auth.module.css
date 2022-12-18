@@ -2,11 +2,16 @@
     display: flex;
     flex-direction: column;
     width: 15rem;
+    margin: 5rem 2rem;
+    padding: 3rem 2rem;
+    border-radius: 2rem;
+    background: #fffcf8;
 }
 
 input{
     border: none;
     margin-bottom: 16px;;
+    background: #fffcf8;
 }
 
 label{
@@ -22,7 +27,7 @@ button{
 
 .loginAction{
     cursor: pointer;
-    color: blue;
+    color: #f8a941;
     margin: 0px auto 16px;
     font-size: 12px;
     font-weight: 800;
@@ -30,4 +35,50 @@ button{
 
 .loginAction:hover{
     text-decoration: underline;
+}
+
+.gameContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.gameHeader{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 4rem);
+    background: #ffeac0;
+    padding: 1rem 2rem;
+}
+
+.gameHeader button{
+    margin: 0;
+    background: none;
+    border: none;
+    font-weight: 900;
+    color: #f8a941;
+    font-size: 1rem;
+}
+
+.gameHeader .token{
+    background: #ffffff;
+    padding: .3rem .8rem;
+    border-radius: .5rem;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: .3;
+    transition: ease .2s opacity;
+}
+
+.gameHeader .token:hover{
+    opacity: 1;
+}
+
+.gameContent{
+    display: flex;
+    flex-direction: row;
+    margin-top: 2rem;
 }

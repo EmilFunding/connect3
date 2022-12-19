@@ -7,7 +7,8 @@ import {
     selectValidToken,
     selectToken,
     logoutAsync,
-    selectUser
+    selectUser,
+    changePasswordAsync
 } from './authSlice';
 import styles from './Auth.module.css';
 import { createStore } from "redux";
@@ -23,6 +24,7 @@ export function Auth() {
     let [mode, setMode] = useState("login");
     const [username, setUsername] = useState('user');
     const [password, setPassword] = useState('secret');
+    const [newPassword, setNewPassword] = useState('');
 
     let title, button, action;
     let cred = {
@@ -48,6 +50,11 @@ export function Auth() {
                 <div className={styles.token}>
                     {token}
                 </div>
+                <input
+                    type="text"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)} />
+                <button onClick={() => dispatch(changePasswordAsync({userid: user, token: token, password: newPassword}))}>Change Password</button>
                 <button onClick={() => dispatch(logoutAsync(token))}>Logout</button>
             </div>
             <div className={styles.gameContent}>

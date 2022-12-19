@@ -47,6 +47,20 @@ const initialState: AuthState = {
     }
   );
 
+  export const changePasswordAsync = createAsyncThunk(
+    'auth/changePassword',
+    async (userInfo: { userid: number, token: string, password: string }) => {
+        let response = await fetch(baseUrl + "users/ +" + userInfo.userid + "?token=" + userInfo.token, {
+            method: 'PATCH',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({password: userInfo.password})
+        })
+    }
+  );
+
   export const authSlice = createSlice({
     name: 'auth',
     initialState,

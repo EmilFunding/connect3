@@ -50,11 +50,13 @@ export function Auth() {
                 <div className={styles.token}>
                     {token}
                 </div>
-                <input
-                    type="text"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)} />
-                <button onClick={() => dispatch(changePasswordAsync({userid: user, token: token, password: newPassword}))}>Change Password</button>
+                <div className={styles.col}>
+                    <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)} />
+                    <button onClick={() => dispatch(changePasswordAsync({userid: user, token: token, password: newPassword}))}>Change Password</button>
+                </div>
                 <button onClick={() => dispatch(logoutAsync(token))}>Logout</button>
             </div>
             <div className={styles.gameContent}>

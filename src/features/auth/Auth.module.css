@@ -82,3 +82,20 @@ button{
     flex-direction: row;
     margin-top: 2rem;
 }
+
+.col{
+    display: flex;
+    flex-direction: column;
+}
+
+.col button {
+    background: #ffffff40;
+    margin: 0;
+    border-radius:  0 0 12px 12px;
+}
+.col input {
+    background: #ffffff40;
+    margin: 0;
+    padding: 2px 8px 0;
+    border-radius: 12px 12px 0 0;
+}
